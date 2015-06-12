@@ -23,7 +23,10 @@ SECRET_KEY = '2+a2fyq!dqn%!$pkvb0al5=&138k-zb4wrglmm9q3ql4y&u1(3'
 DEBUG = True
 
 TEMPLATE_DEBUG = True
-TEMPLATE_DIRS = ('/Users/nigelharsch/Documents/programming/tango_with_django/tango_with_django_project/tango_with_django_project/')
+TEMPLATE_PATH = os.path.join(BASE_DIR, 'templates')
+TEMPLATE_DIRS = (
+    TEMPLATE_PATH,
+)
 
 ALLOWED_HOSTS = []
 
