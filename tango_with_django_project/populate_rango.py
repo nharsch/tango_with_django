@@ -5,6 +5,7 @@ import django
 django.setup()
 
 from rango.models import Category, Page
+from random import randrange
 
 def populate():
     '''
@@ -16,20 +17,23 @@ def populate():
     python_cat.save()
 
     add_page(cat=python_cat,
-             title="Official Python Tutorial",
-             url="http://docs.python.org/2/tutorial/")
-
+        views = randrange(10),
+        title="Official Python Tutorial",
+        url="http://docs.python.org/2/tutorial/")
+        
     add_page(cat=python_cat,
              title="How to Think like a Computer Scientist",
              url="http://www.greenteapress.com/thinkpython/")
 
     add_page(cat=python_cat,
-             title="Learn Python in 10 Minutes",
-             url="http://www.korokithakis.net/tutorials/python/")
+            views = randrange(10),
+            title="Learn Python in 10 Minutes",
+            url="http://www.korokithakis.net/tutorials/python/")
 
     django_cat = add_cat("Django")
 
     add_page(cat=django_cat,
+            views = randrange(10),
             title="Official Django Tutorial",
             url="https://docs.djangoproject.com/en/1.5/intro/tutorial01/")
 
