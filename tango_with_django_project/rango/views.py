@@ -35,8 +35,11 @@ def category(request, category_name_slug):
         # Note that filter returns >= 1 model instance.
         pages = Page.objects.filter(category=category)
 
+        # Adds our results list to the template context under name
+        context_dict['pages'] = pages
+
         # Adds our results list to  the template context under name pages. 
-        conext_dict['category'] = category
+        context_dict['category'] = category
 
 
     except Category.DoesNotExist:
