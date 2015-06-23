@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 import datetime
 # Create your models here.
@@ -13,7 +14,7 @@ class Category(models.Model):
         self.slug = slugify(self.name)
         super(Category, self).save(*args, **kwargs)
 
-    def __unicode__(self): 
+    def __unicode__(self):
         return self.name
 
 class Page(models.Model):
@@ -24,4 +25,18 @@ class Page(models.Model):
 
     def __unicode__(self):
         return self.title
+
+class UserProfile(models.Model):
+    '''this is just to add features to User model without overwriting underlying User'''
+    # This line is requires. Links UserProfile to a User model instance.
+    user = models.OneToOneField(User)
+
+    # The additional attributes we wish to include. 
+    website = models.URLField(blank=True)
+    picture = models.ImageField(upload_to='profile_images', blank=True)
+
+    # Override the __unicode__() method to return out something meaningful!
+    def __unicode__(self):
+        return self.user.username
+
 
