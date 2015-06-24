@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from rango.models import Category, Page
@@ -49,6 +49,7 @@ def category(request, category_name_slug):
 
     return render(request, 'rango/category.html', context_dict)
 
+@login_required
 def add_category(request):
     # A HTTP POST?
     if request.method == 'POST':
@@ -73,6 +74,7 @@ def add_category(request):
     # Render the form with error messages (if any).
     return render(request, 'rango/add_category.html', {'form':form})
 
+@login_required
 def add_page(request, category_name_slug):
     # set the category
     try:
@@ -154,7 +156,6 @@ def register(request):
                   {'user_form': user_form, 'profile_form': profile_form, 'registred': registered})
 
 def user_login(request):
-
     # If the request is a HTTP POST, try to pull out the relevant information.
     if request.method == 'POST':
         # Gather the username and password provide by the under.
@@ -179,12 +180,19 @@ def user_login(request):
             else:
                 # An inactive account was userd - no logging in!
                 return HttpResponse("Your Rango account is disabled.")
-    else:
-        # Bad login request is not a HTTP POST, so display the login form.
-        # THis scenario would most likely be a HTTP GET.
-        return render(request, 'rango/login.html', {})
+        else:
+            # Bad login request is not a HTTP POST, so display the login form.
+            # This scenario would most likely be a HTTP GET.
+            print "Invalid login details: {0}, {1}".format(username, password)
+            return render(request, 'rango/login.html', {'error_msg':'Invalid login details supplied'})
 
 @login_required
 def restricted(request):
     return HttpResponse("Since you're logged in, you can see this text!")
 
+def user_logout(request):
+    # Since we know the user is logged in, we can now just log them out.
+    logout(request)
+
+    # Take the user back to the homepage.
+    return HttpResponseRedirect('/rango/')
