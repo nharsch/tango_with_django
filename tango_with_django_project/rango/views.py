@@ -1,4 +1,5 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth import authenticate, login
 from django.shortcuts import render
 from rango.models import Category, Page
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
@@ -117,7 +118,7 @@ def register(request):
             user.set_password(user.password)
             user.save()
 
-            # Now sort out the UderProfile instance.
+            # Now sort out the UserProfile instance.
             # Since we need to set the user attribute ourselves, we set commit=False/
             # This delays saving the model until we're ready to avoid integridty problems.
             profile = profile_form.save(commit=False)
@@ -150,5 +151,34 @@ def register(request):
     return render(request,
                   'rango/register.html',
                   {'user_form': user_form, 'profile_form': profile_form, 'registred': registered})
-                  
 
+def user_login(request):
+
+    # If the request is a HTTP POST, try to pull out the relevant information.
+    if request.method == 'POST':
+        # Gather the username and password provide by the under.
+        # This information is obtained from the login form.
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+    # Use Django's machinery to attempt to see if the username/password 
+    # combo is valid - a User object is returned if it is.
+        user = authenticate(username=username, password=password)
+
+
+        # If we have a User object, the details are correct.
+        # If None, no user was found
+        if user:
+            # Is the current user active?
+            if user.is_active:
+                # If the account is valid and active, we can log the user in.
+                # We'll send the user back to the homepage.
+                login(request, user)
+                return HttpResponseRedirect('/rango/')
+            else:
+                # An inactive account was userd - no logging in!
+                return HttpResponse("Your Rango account is disabled.")
+    else:
+        # Bad login request is not a HTTP POST, so display the login form.
+        # THis scenario would most likely be a HTTP GET.
+        return render(request, 'rango/login.html', {})
