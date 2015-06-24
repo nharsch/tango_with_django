@@ -185,6 +185,9 @@ def user_login(request):
             # This scenario would most likely be a HTTP GET.
             print "Invalid login details: {0}, {1}".format(username, password)
             return render(request, 'rango/login.html', {'error_msg':'Invalid login details supplied'})
+    else:
+        # No context vars to pass to the template
+        return render(request, 'rango/login.html', {})
 
 @login_required
 def restricted(request):
