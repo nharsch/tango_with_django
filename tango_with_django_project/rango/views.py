@@ -99,7 +99,6 @@ def add_page(request, category_name_slug):
     return render(request, 'rango/add_page.html', context_dict)
 
 def register(request):
-
     # A boolean value for telling the template whether the registration was successful 
     # Set to False initially. Code changes value to True when registration succeeds.
     registered = False
