@@ -1,13 +1,10 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 
 {% load staticfiles %}
 
-<html>
-  <head>
-    <title>Rango</title>
-  </head>
+{% block title %}Rango{% endblock %}
 
-  <body>
+{% block body_block %}
     {% if user.is_authenticated %}
     <h1>Rango says...hello {{ user.username }}! </h1>
     {% else %}
@@ -42,6 +39,4 @@
     <a href="{% url 'about' %}">About</a><br />
     
     <br />
-      </body>
-
-</html>
+{% endblock %}

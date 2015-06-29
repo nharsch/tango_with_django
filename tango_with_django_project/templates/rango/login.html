@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <!-- Is anyone getting tired of repeatedly entering the header
-    over and over?? -->
-  </head>
+{% extends 'base.html' %}
 
-  <body>
+{% block title %}Login{% endblock %}
+
+{% block body_block %}
     <h1>Login to Rango</h1>
 
     <form id="login_form" method="post" action="/rango/login/">
@@ -20,5 +17,4 @@
     {% if error_msg %}
     <p>{{ error_msg }}</p>
     {% endif %}
-  </body>
-</html>
+{% endblock %}
