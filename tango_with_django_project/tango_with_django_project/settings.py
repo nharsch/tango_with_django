@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'rango',
     'registration',
     'bootstrap_toolkit',
+    'django_extensions',
 )
 
 LOGIN_URL = '/accounts/login/'

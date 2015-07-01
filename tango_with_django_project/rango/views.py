@@ -91,6 +91,17 @@ def search(request):
 
     return render(request, 'rango/search.html', {'result_list': result_list})
 
+def track_url(request):
+    if request.method == 'GET':
+        page_id = request.GET.get('page_id')
+        if page_id:
+            print page_id
+            page = Page.objects.get(id=page_id)
+            page.views += 1
+            page.save()
+            return HttpResponseRedirect(page.url)
+    return HttpResponse("no page given")
+
 @login_required
 def add_category(request):
     # A HTTP POST?
@@ -127,6 +138,7 @@ def add_page(request, category_name_slug):
     if request.method == 'POST':
         form = PageForm(request.POST)
         if form.is_valid():
+            page = form.save(commit=False)
             page.category = cat
             page.views = 0
             page.save()
