@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Rango Users{% endblock %}
+
+{% block body_block %}
+
+{% if users %}
+  {% for user in users %}
+  <div>
+    <div>{{ user.user.username }}</div>
+    <div><a href="{{ user.website }}"><img src={{ user.picture }} /></a></div>
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% endblock %}
