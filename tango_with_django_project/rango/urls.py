@@ -9,5 +9,7 @@ urlpatterns = patterns('',
                        url(r'^category/(?P<category_name_slug>[\w\-]+)/add_page/$', views.add_page, name='add_page'),
                        url(r'search', views.search, name='search'),
                        url(r'goto', views.track_url, name='goto'),
+                       url(r'add_profile', views.register_profile, name='add_profile'),
+                       url(r'users', views.list_users, name="list_users"),
                        url(r'^restricted/', views.restricted, name='restricted'),
                        )
