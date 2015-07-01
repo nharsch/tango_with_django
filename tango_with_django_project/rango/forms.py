@@ -18,7 +18,9 @@ class CategoryForm(forms.ModelForm):
 
 class PageForm(forms.ModelForm):
     title = forms.CharField(max_length=128, help_text="Please enter the title of the page")
-    url = forms.URLField(max_length=200, help_text="Please ener the URL of the page")
+    url = forms.URLField(max_length=200, 
+                         help_text="Please ener the URL of the page",
+                         widget=forms.widgets.TextInput,)
     views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
 
     class Meta:
@@ -52,6 +54,19 @@ class UserForm(forms.ModelForm):
         fields = ('username', 'email', 'password')
 
 class UserProfileForm(forms.ModelForm):
+    website = forms.URLField(max_length=200, 
+                             help_text="Please ener the URL of the page",
+                             widget=forms.widgets.TextInput,)
     class Meta:
         model = UserProfile
         fields = ('website', 'picture')
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        website = cleaned_data.get('website')
+        if website and not website.startswith('http://'):
+            website = 'http://' + website
+            cleaned_data['website'] = website
+
+        return cleaned_data
+

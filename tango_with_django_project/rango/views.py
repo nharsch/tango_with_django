@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-from rango.models import Category, Page
+from rango.models import Category, Page, UserProfile
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 from rango.bing_search import run_query
 
@@ -108,6 +108,16 @@ def track_url(request):
             return HttpResponseRedirect(page.url)
     return HttpResponse("no page given")
 
+def register_profile(request):
+    form = UserProfileForm
+    return render(request, 'rango/profile_registration.html', {"form":form})
+
+def list_users(request):
+    # get all the users
+    user_list = UserProfile.objects.all()
+    
+    return render(request, 'rango/users.html', {'users':user_list})
+
 @login_required
 def add_category(request):
     # A HTTP POST?
@@ -149,7 +159,7 @@ def add_page(request, category_name_slug):
             page.views = 0
             page.save()
             # probably better to use a redirect here
-            return category(request, category_name_slug)
+            return HttpResponseRedirect( '/rango/category/{}'.format(category_name_slug))
         else:
             print form.errors
     else:
