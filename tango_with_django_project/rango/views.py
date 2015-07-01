@@ -54,8 +54,16 @@ def category(request, category_name_slug):
     # Create a context dict
     context_dict = {}
 
+    if request.method == 'POST':
+        result_list = []
+        query = request.POST.get('query').strip()
+        if query:
+            result_list = run_query(query)
+        print result_list
+        context_dict.update({'result_list':result_list})
+
     try:
-        # Can we find a category name slaug with the given name?
+        # Can we find a category name slug with the given name?
         # If we can't, the .get() method raises a DoesNotExist exception.
         category = Category.objects.get(slug=category_name_slug)
         context_dict['category_name'] = category.name
@@ -79,7 +87,6 @@ def category(request, category_name_slug):
     return render(request, 'rango/category.html', context_dict)
 
 def search(request):
-
     result_list = []
 
     if request.method == 'POST':
@@ -89,13 +96,12 @@ def search(request):
             # Run our Bing function to get the results list!
             result_list = run_query(query)
 
-    return render(request, 'rango/search.html', {'result_list': result_list})
+    return HttpResquest(request, {'result_list': result_list})
 
 def track_url(request):
     if request.method == 'GET':
         page_id = request.GET.get('page_id')
         if page_id:
-            print page_id
             page = Page.objects.get(id=page_id)
             page.views += 1
             page.save()

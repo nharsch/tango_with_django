@@ -1,21 +1,11 @@
-{% extends "base.html" %}
 
-{% load staticfiles %}
-
-{% block title %}Search{% endblock %}
-
-{% block body_block %}
-
-<div class="page-header">
-    <h1>Search with Rango</h1>
-  </div>
 
 <div class="row">
 
     <div class="panel panel-primary">
       </br>
 
-      <form class="form-inline" id="user_form" method="post" action="{% url 'search' %}">
+      <form class="form-inline" id="user_form" method="post" action="{% url 'category' category.slug %}">
         {% csrf_token %}
 
         <input class="form-control" type="text" name="query" id=="query" value="Search" />
@@ -41,4 +31,3 @@
           </div>
       </div>
 </div>
-{% endblock %}

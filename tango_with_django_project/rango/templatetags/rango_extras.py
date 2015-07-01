@@ -7,3 +7,4 @@ register = template.Library()
 def get_category_list(cat=None):
     return {'cats': Category.objects.all(), 'act_cat': cat}
 
+
