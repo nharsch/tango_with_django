@@ -4,7 +4,7 @@
 {% block title %}Registration{% endblock %}
 
 {% block body_block %}
-<form role="form" id="user_profile_form" method="post" action=".">
+<form role="form" id="user_profile_form" method="post" action="{% url 'add_profile' %}">
   <h2 class="form-signin-heading">Add user profile information</h2>
   {% csrf_token %}
   {{ form|as_bootstrap }}

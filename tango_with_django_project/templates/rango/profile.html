@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Rango Users{% endblock %}
+
+{% block body_block %}
+
+
+<div class="hero-unit">
+      <h1> Profile <h1> <br/>
+      <h2>{{ user.username }}</h2>
+      <p>Email: {{ user.email }}</p>
+
+      {% if userprofile %}
+          <p>Website: <a href="{{ userprofile.website }}">{{ userprofile.website }}</a></p>
+          <br/>
+        {% if userprofile.picture %}
+          <img src="{{ userprofile.picture.url }}"  />
+        {% endif %}
+      {% endif %}
+</div>
+
+
+
+
+
+
+
+
+
+{% if profile_list %}
+<div> 
+  {% for profile in profile_list %}
+  <div class="hero-unit">
+    {% if profile.picture %}
+    <div><a href="{{ profile.website }}"><img src="{{ profile.picture.url }}"></a></div>
+      {% endif %}
+    <h2><a href="{{ profile.website }}">{{ profile.user.username }}</a></h2>
+  </div>
+  {% endfor %}
+</div>
+  {% endif %}
+  {% endblock %}

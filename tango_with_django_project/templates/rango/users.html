@@ -8,7 +8,7 @@
   {% for user in users %}
   <div>
     <div>{{ user.user.username }}</div>
-    <div><a href="{{ user.website }}"><img src={{ user.picture }} /></a></div>
+    <div><a href="{{ user.website }}"><img src={{ user.picture.name }} /></a></div>
   </div>
   {% endfor %}
   {% endif %}

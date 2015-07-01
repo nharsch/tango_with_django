@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-from rango.models import Category, Page, UserProfile
+from rango.models import Category, Page, UserProfile, User
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 from rango.bing_search import run_query
 
@@ -109,6 +109,13 @@ def track_url(request):
     return HttpResponse("no page given")
 
 def register_profile(request):
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST)
+        profile = form.save(commit=False)
+        profile.user = request.user
+        profile.save()
+        return HttpResponseRedirect("/rango/users/")
+
     form = UserProfileForm
     return render(request, 'rango/profile_registration.html', {"form":form})
 
