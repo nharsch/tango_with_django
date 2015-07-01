@@ -15,10 +15,10 @@
     <div class="panel panel-primary">
       </br>
 
-      <form class="form-inline" id="user_form" method="post" action="{$ url 'search' %}">
-        {% csrf_tokeni %}
+      <form class="form-inline" id="user_form" method="post" action="{% url 'search' %}">
+        {% csrf_token %}
 
-        <input class="form-control" type="text" name="submit" value="Search" />
+        <input class="form-control" type="text" name="query" id=="query" value="Search" />
         <input class="btn btn-primary" type="submit" name="submit" value="Search" />
         <br />
       </form>

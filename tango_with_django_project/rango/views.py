@@ -89,7 +89,7 @@ def search(request):
             # Run our Bing function to get the results list!
             result_list = run_query(query)
 
-    return render(render, 'rango/search.html', {'result_list': result_list})
+    return render(request, 'rango/search.html', {'result_list': result_list})
 
 @login_required
 def add_category(request):
