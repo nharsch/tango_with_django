@@ -78,6 +78,21 @@ def category(request, category_name_slug):
 
     return render(request, 'rango/category.html', context_dict)
 
+@login_required
+def like_category(request):
+    if request.method == "GET":
+        cat_id = request.GET.get('category_id')
+    
+    likes = 0
+    if cat_id:
+        cat = Category.objects.get(id=int(cat_id))
+        if cat:
+            likes = cat.likes + 1
+            cat.likes = likes
+            cat.save()
+    # return just number of likes
+    return HttpResponse(likes)
+
 def search(request):
     result_list = []
 
