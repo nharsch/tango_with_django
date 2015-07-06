@@ -2,7 +2,7 @@ from datetime import datetime
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from rango.models import Category, Page, UserProfile, User
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
@@ -70,7 +70,7 @@ def category(request, category_name_slug):
 
         # Retrieve all of the associated pages.
         # Note that filter returns >= 1 model instance.
-        pages = Page.objects.filter(category=category)
+        pages = Page.objects.filter(category=category).order_by('-views')
 
         # Adds our results list to the template context under name
         context_dict['pages'] = pages
@@ -99,14 +99,19 @@ def search(request):
     return HttpResquest(request, {'result_list': result_list})
 
 def track_url(request):
+    page_id = None
+    url = '/rango/'
     if request.method == 'GET':
         page_id = request.GET.get('page_id')
         if page_id:
-            page = Page.objects.get(id=page_id)
-            page.views += 1
-            page.save()
-            return HttpResponseRedirect(page.url)
-    return HttpResponse("no page given")
+            try:
+                page = Page.objects.get(id=page_id)
+                url = page.url
+                page.views += 1
+                page.save()
+            except:
+                pass
+    return redirect(url)
 
 def register_profile(request):
     if request.method == 'POST':
@@ -114,15 +119,14 @@ def register_profile(request):
         profile = form.save(commit=False)
         profile.user = request.user
         profile.save()
-        return HttpResponseRedirect("/rango/users/")
-
+        return HttpResponseRedirect("/rango/users/") 
     form = UserProfileForm
     return render(request, 'rango/profile_registration.html', {"form":form})
 
 def list_users(request):
     # get all the users
     user_list = UserProfile.objects.all()
-    
+
     return render(request, 'rango/users.html', {'users':user_list})
 
 @login_required

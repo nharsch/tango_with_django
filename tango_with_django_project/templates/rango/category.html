@@ -10,22 +10,26 @@
     {% if category %}
       {% if pages %}
         <ul>
-            {% for page in pages %}
-            <li><a href="{{ page.url }}">{{ page.title }}</a></li>
-            {% endfor %}
-          </ul>
-      {% else %}
-            <strong>No pages currently in category.</strong>
+        {% for page in pages %}
+          <li>
+          <a href="{% url 'goto' %}?page_id={{page.id}}">{{ page.title }}</a>
+          {% if page.views > 1 %}
+            ({{ page.views }} views)
+            {% elif page.views == 1 %}
+            ({{ page.views }} view)
+          {% endif %}
+            </li>
+        {% endfor %}
       {% endif %}
 
       {% if user.is_authenticated %}
             <a href="/rango/category/{{ category_name_slug }}/add_page">Add a page to this category</a>
             </br>{% include 'rango/search.html' %}
-            {% endif %}
+      {% endif %}
 
 
 
-      {% else %}
+    {% else %}
             The specified category {{ category_name }} does not exist!
     {% endif %}
     
