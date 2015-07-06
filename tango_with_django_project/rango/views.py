@@ -61,28 +61,20 @@ def category(request, category_name_slug):
             result_list = run_query(query)
         print result_list
         context_dict.update({'result_list':result_list})
+        context_dict.update({'query': query})
 
     try:
-        # Can we find a category name slug with the given name?
-        # If we can't, the .get() method raises a DoesNotExist exception.
         category = Category.objects.get(slug=category_name_slug)
         context_dict['category_name'] = category.name
-
-        # Retrieve all of the associated pages.
-        # Note that filter returns >= 1 model instance.
         pages = Page.objects.filter(category=category).order_by('-views')
-
-        # Adds our results list to the template context under name
         context_dict['pages'] = pages
-
-        # Adds our results list to  the template context under name pages. 
         context_dict['category'] = category
-        context_dict['category_name_slug'] = category.slug
 
     except Category.DoesNotExist:
-        # We get here if we didn't find the specified category
-        # Don't do anything = the template displays the "no category" message for us.
         pass
+    
+    if not context_dict.get('query'):
+        context_dict['query'] = category.name
 
     return render(request, 'rango/category.html', context_dict)
 
