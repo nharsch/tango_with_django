@@ -42,8 +42,7 @@
                 <li><a href="{% url 'add_category' %}">Add a New Category</a></li>
                 <li><a href="{% url 'add_profile' %}">Add Profile Information</a></li>
                 <li><a href="{% url 'list_users' %}">List Users</a></li>
-              {% else %}
-                <li><a href="{% url 'registration_register' %}">Register Here</a></li>
+              {% else %} <li><a href="{% url 'registration_register' %}">Register Here</a></li>
                 <li><a href="{% url 'auth_login' %}">Login</a></li>
               {% endif %}
                   <li><a href="{% url 'about' %}">About</a></li>
@@ -56,7 +55,14 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           {% block side_block %}
-          {% get_category_list category %}
+          <ul class="nav nav_list">
+              <li class="nav-header">Find a Category</li>
+              <form>
+                <label></label>
+                <li><input class="input-medium search-query" type="text" name="suggestion" value="" id="suggestion" /></li>
+              </form>
+            </ul>
+          <div id="cats">{% get_category_list category %}</div>
           {% endblock %}
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">

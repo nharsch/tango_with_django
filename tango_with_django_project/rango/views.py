@@ -120,6 +120,35 @@ def track_url(request):
                 pass
     return redirect(url)
 
+
+def get_category_list(max_results=0, starts_with=''):
+    '''helper function that returns matches as a list'''
+    cat_list = []
+    if starts_with:
+        # find the categories that start with string
+        cat_list = Category.objects.filter(name__istartswith=starts_with)
+
+    if max_results > 0:
+        # just get the the first n results
+        if len(cat_list) > max_results:
+            cat_list = cat_list[:max_results]
+
+    return cat_list
+
+
+
+def suggest_category(request):
+
+    if request.method == 'GET':
+        starts_with = request.GET.get('suggestion')
+    
+    # use helper function to get top 8 results
+    cat_list = get_category_list(8, starts_with=starts_with)
+
+    # populate them to reused cats html
+    return render(request, 'rango/cats.html', {'cats': cat_list })
+
+
 def register_profile(request):
     if request.method == 'POST':
         form = UserProfileForm(request.POST)
