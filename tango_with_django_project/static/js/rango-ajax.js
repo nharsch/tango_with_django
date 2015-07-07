@@ -20,4 +20,24 @@ $(document).ready(function() {
       $('#cats').html(data);
     });
   });
+
+  // add page from search results
+  $('.rango-add').click(function(){
+    var catid;
+    var title;
+    var url;
+
+    catid = $(this).attr("data-catid");
+    title = $(this).attr("data-title");
+    url = $(this).attr("data-url");
+    console.log("the url is", url);
+    // make the call
+    $.get('/rango/auto_add_page/',
+          {url:url, category_id: catid, title:title},
+          function(data){
+            //what do I do here?
+            // update the page div
+            $('#page').html(data);
+            });
+  });
 });
