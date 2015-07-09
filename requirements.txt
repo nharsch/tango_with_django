@@ -1,4 +1,7 @@
 coverage==3.7.1
+blessings==1.6
+bpython==0.14.1
+curtsies==0.1.19
 Django==1.7
 django-bootstrap-toolkit==2.15.0
 django-extensions==1.5.5
