@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'registration',
     'bootstrap_toolkit',
     'django_extensions',
+    'csvimport.app.CSVImportConf',
 )
 
 LOGIN_URL = '/accounts/login/'
