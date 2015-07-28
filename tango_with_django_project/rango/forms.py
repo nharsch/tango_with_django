@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.forms.models import modelformset_factory
 from rango.models import Page, Category, UserProfile
 
 class CategoryForm(forms.ModelForm):
@@ -45,6 +46,20 @@ class PageForm(forms.ModelForm):
             cleaned_data['url'] = url
 
         return cleaned_data
+
+PageFormSetBase = modelformset_factory(
+    Page, extra=0, fields=('title', 'category', 'url', 'views')
+)
+
+class PageBulkForm(forms.Form):
+    '''form to create several pages at once'''
+    category_choices = forms.ModelMultipleChoiceField(queryset=Category.objects.all())
+    title = forms.CharField(max_length=128, help_text="Please enter the title of the page")
+    url = forms.URLField(max_length=200, 
+                         help_text="Please ener the URL of the page",
+                         widget=forms.widgets.TextInput,)
+    views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
+
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())

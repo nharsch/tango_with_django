@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
 from rango.models import Category, Page, UserProfile, User
-from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
+from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm, PageBulkForm
 from rango.bing_search import run_query
 
 def index(request):
@@ -37,7 +37,7 @@ def index(request):
     else:
         # Cookie last_visit doesn't exist, so create it to the current dat/time.
         reset_last_visit_time = True
-    
+
     if reset_last_visit_time:
         request.session['last_visit'] = str(datetime.now())
         request.session['visits'] = visits
@@ -235,6 +235,33 @@ def add_page(request, category_name_slug):
 
     context_dict = {'form':form, 'category':cat}
     return render(request, 'rango/add_page.html', context_dict)
+
+def add_pages(request):
+    '''
+    create several pages from a submitted list
+    '''
+    if request.method == 'POST':
+        form = PageBulkForm()
+        # if form.is_valid():
+        # Loop through categories, create bulk insert list
+        insert_list = []
+        for cat in request.POST.getlist('category_choices'):
+            page = Page(
+                category=Category.objects.get(pk=int(cat)),
+                title=request.POST['title'],
+                url=request.POST['url'],
+                views=request.POST['views'],) 
+            insert_list.append(page)
+        # bulk create objects
+        Page.objects.bulk_create(insert_list)
+        return HttpResponseRedirect('/admin/rango/page/')
+        # else:
+        #     print form.errors if form.errors else "where are the errors??"
+        #     return render(request, 'rango/add_pages.html', {'form':form})
+    else:
+        form = PageBulkForm
+        context_dict = {'form':form}
+        return render(request, 'rango/add_pages.html', context_dict)
 
 @login_required
 def restricted(request):
