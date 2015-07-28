@@ -241,23 +241,25 @@ def add_pages(request):
     create several pages from a submitted list
     '''
     if request.method == 'POST':
-        form = PageBulkForm()
-        # if form.is_valid():
+        form = PageBulkForm(request.POST)
+        # bind the form?
+        if form.is_valid():
         # Loop through categories, create bulk insert list
-        insert_list = []
-        for cat in request.POST.getlist('category_choices'):
-            page = Page(
-                category=Category.objects.get(pk=int(cat)),
-                title=request.POST['title'],
-                url=request.POST['url'],
-                views=request.POST['views'],) 
-            insert_list.append(page)
-        # bulk create objects
-        Page.objects.bulk_create(insert_list)
-        return HttpResponseRedirect('/admin/rango/page/')
-        # else:
-        #     print form.errors if form.errors else "where are the errors??"
-        #     return render(request, 'rango/add_pages.html', {'form':form})
+            insert_list = []
+            for cat in request.POST.getlist('category_choices'):
+                page = Page(
+                    category=Category.objects.get(pk=int(cat)),
+                    title=request.POST['title'],
+                    url=request.POST['url'],
+                    views=request.POST['views'],) 
+                insert_list.append(page)
+            # bulk create objects
+            Page.objects.bulk_create(insert_list)
+            return HttpResponseRedirect('/admin/rango/page/')
+        else:
+            print "form is bound: ", form.is_bound
+            print form.errors if form.errors else "where are the errors??"
+            return render(request, 'rango/add_pages.html', {'form':form})
     else:
         form = PageBulkForm
         context_dict = {'form':form}

@@ -10,12 +10,6 @@
       <h2 class="form-signin-heading">Add multiple pages</h2>
         {% csrf_token %}
         {{ form|as_bootstrap }}
-        {% if form.errors %}
-          {% for error in form.errors %}
-            {{ error }}
-          {% endfor %}
-        {% endif %}
-      <br/>
       <button class="btn btn-primary" type="submit" name="submit">Add Page</button>
     </form>
 {% endblock %}
