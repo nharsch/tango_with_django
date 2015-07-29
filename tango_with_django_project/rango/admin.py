@@ -1,4 +1,6 @@
+from django.conf.urls import patterns
 from django.contrib import admin
+from django.shortcuts import render, redirect
 from rango.models import Category, Page, UserProfile
 from rango.forms import PageBulkForm, PageFormSetBase
 
@@ -6,44 +8,47 @@ from rango.forms import PageBulkForm, PageFormSetBase
 class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug':('name',)}
 
-# class PageAdmin(admin.ModelAdmin):
-#     form = PageBulkAdminForm
-#
-#     list_display = ('title', 'category', 'url', 'views')
-#
-#     # build a list of objects to be created
-#     insert_list = []
-#     for cat in form.cleaned_data['category_choices']:
-#        page = Page(
-#        #fingers crossed that this works
-#            category=cat,
-#            title= form.title,
-#            url=form.url,
-#            views=form.views)
-#     insert_list.append(page)
-#
-#     Page.objects.bulk_create(insert_list)
-#
-#     # def save_model(self, request, form, form, change):
-#         # this info to be written on each new abject
-#         # form.title = form.cleaned_data['title']
-#         # form.url = form.cleaned_data['url']
-#         # form.views = form.cleaned_data['views']
-#
-#         # for cat in form.cleaned_data['category_choices']:
-#         #     # create new page formect
-#         #     page = Page(
-#         #         #fingers crossed that this works
-#         #         category=cat,
-#         #         title=form.title,
-#         #         url=form.url,
-#         #         views=form.views)
-#         #     page.save()
-#         #
-#
+class PageAdmin(admin.ModelAdmin):
+
+    # update urls
+    def get_urls(self):
+        urls = super(PageAdmin, self).get_urls()
+        my_urls = patterns('',
+                           (r'/bulk_add_pages/$', self.admin_site.admin_view(self.bulk_add_pages))
+                           )
+        return my_urls + urls
+
+    # add a new view here
+    def bulk_add_pages(self, request):
+        '''
+        create several pages from a submitted list
+        '''
+        if request.method == 'POST':
+            form = PageBulkForm(request.POST)
+            # bind the form?
+            if form.is_valid():
+            # Loop through categories, create bulk insert list
+                insert_list = []
+                for cat in request.POST.getlist('category_choices'):
+                    page = Page(
+                        category=Category.objects.get(pk=int(cat)),
+                        title=request.POST['title'],
+                        url=request.POST['url'],
+                        views=request.POST['views'],) 
+                    insert_list.append(page)
+                # bulk create objects
+                Page.objects.bulk_create(insert_list)
+                return HttpResponseRedirect('/admin/rango/page/')
+            else:
+                return render(request, 'rango/add_pages.html', {'form':form})
+        else:
+            form = PageBulkForm
+            context_dict = {'form':form}
+            return render(request, 'rango/add_pages.html', context_dict)
+
 
 # Update the registration to include this customized interface
 admin.site.register(Category, CategoryAdmin)
-admin.site.register(Page)
+admin.site.register(Page, PageAdmin)
 admin.site.register(UserProfile)
 # Register your models here.
