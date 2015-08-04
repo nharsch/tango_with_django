@@ -12,6 +12,8 @@ class CategoryAdmin(admin.ModelAdmin):
 class PageAdmin(admin.ModelAdmin):
     # update urls
 
+    change_list_template = 'admin/custom_change_list.html'
+
     def get_urls(self):
         urls = super(PageAdmin, self).get_urls()
         print "ursl are"
