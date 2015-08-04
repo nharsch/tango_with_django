@@ -9,15 +9,16 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug':('name',)}
 
 class PageAdmin(admin.ModelAdmin):
-
     # update urls
+
     def get_urls(self):
         urls = super(PageAdmin, self).get_urls()
+        print "ursl are"
         my_urls = patterns('',
-                           (r'/bulk_add_pages/$', self.admin_site.admin_view(self.bulk_add_pages))
+                           (r'bulk_add_pages/$', self.admin_site.admin_view(self.bulk_add_pages))
                            )
+        print my_urls + urls
         return my_urls + urls
-
     # add a new view here
     def bulk_add_pages(self, request):
         '''
