@@ -1,5 +1,6 @@
 from django.conf.urls import patterns
 from django.contrib import admin
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from rango.models import Category, Page, UserProfile
 from rango.forms import PageBulkForm, PageFormSetBase
@@ -41,11 +42,11 @@ class PageAdmin(admin.ModelAdmin):
                 Page.objects.bulk_create(insert_list)
                 return HttpResponseRedirect('/admin/rango/page/')
             else:
-                return render(request, 'rango/add_pages.html', {'form':form})
+                return render(request, 'admin/add_pages.html', {'form':form})
         else:
             form = PageBulkForm
             context_dict = {'form':form}
-            return render(request, 'rango/add_pages.html', context_dict)
+            return render(request, 'admin/add_pages.html', context_dict)
 
 
 # Update the registration to include this customized interface
