@@ -2,11 +2,12 @@ from datetime import datetime
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.forms.formsets import formset_factory
 from django.forms.models import modelformset_factory
 from django.shortcuts import render, redirect
 
 from rango.models import Category, Page, UserProfile, User
-from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm, PageBulkForm, ManifestInitForm
+from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm, PageBulkForm, ManifestInitForm, FullPageForm
 from rango.bing_search import run_query
 
 def index(request):
@@ -277,19 +278,43 @@ def manifest_add(request):
         incoming_title = request.POST.get('title')
         cats = Category.objects.all()
         # create the formset dynamically
-        PageFormSet = modelformset_factory(Page, 
+        PageFormSet = modelformset_factory(Page,
                                            fields=('category', 'title', 'url'), 
                                            extra=len(cats),
                                            )
+
         formset = PageFormSet(initial=[
-                                {'title':'test_input'}],
-                                queryset=Page.objects.none(),
-                              )
+                             {'title':'test_input'}],
+                             queryset=Page.objects.none(),
+                             )
+
         for form in formset.forms:
             form.initial['title'] = incoming_title
 
         return render(request, 'rango/manifest_add.html', {'formset':formset})
-    
+
+
+def bulk_page_form_add(request):
+    '''
+    take list of assets, create render page with formset for each asset 
+    '''
+    job_list = [
+        {'category':'1', 'title':'test_1','url': 'www.url1.com'},
+        {'title':'test_2','url': 'www.url2.com'}
+    ]
+
+    # if request.method == 'GET':
+    #     # TODO: make this CSV import
+    #     return render(request, 'rango/manifest_add.html', {'manifest_init_form':ManifestInitForm})
+    #
+    # else:
+    # create the formset dynamically
+
+    PageFormSet = formset_factory(FullPageForm, extra=0)
+    formset = PageFormSet(initial=job_list)
+
+    return render(request, 'rango/bulk_page_add.html', {'formset':formset})
+
 
 @login_required
 def restricted(request):

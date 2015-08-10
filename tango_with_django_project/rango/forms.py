@@ -51,6 +51,9 @@ class PageForm(forms.ModelForm):
 
         return cleaned_data
 
+class FullPageForm(PageForm):
+    '''form page above with category dropdown'''
+    category = forms.ModelChoiceField(queryset=Category.objects.all())
 
 
 PageFormSetBase = modelformset_factory(
