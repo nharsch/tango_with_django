@@ -3,14 +3,20 @@ from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from rango.models import Category, Page, UserProfile
-from rango.forms import PageBulkForm, PageFormSetBase
+from rango.forms import PageBulkForm, PageFormSetBase, PageInlineForm
 
 # Add in this class to customize the admin interface
 class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug':('name',)}
 
+# class PageInline(admin.TabularInline):
+#     model = Page
+#     form = PageInlineForm
+#
+
 class PageAdmin(admin.ModelAdmin):
     # update urls
+    # inlines = [PageInline]
 
     change_list_template = 'admin/custom_change_list.html'
 
@@ -49,7 +55,6 @@ class PageAdmin(admin.ModelAdmin):
             form = PageBulkForm
             context_dict = {'form':form}
             return render(request, 'admin/add_pages.html', context_dict)
-
 
 # Update the registration to include this customized interface
 admin.site.register(Category, CategoryAdmin)

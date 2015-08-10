@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% load bootstrap_toolkit %}
+
+{% block title %}Rango{% endblock %}
+
+{% block body_block %}
+  {% if manifest_init_form %}
+  
+    <form method="post">
+    {{ manifest_init_form|as_bootstrap }}
+    {% csrf_token %} 
+      <input type="submit" value="OK">
+    </form>
+  
+  {% endif %}
+  {% if formset %}
+    {% for form in formset %}
+      {{ form|as_bootstrap }}
+      </br>
+    {% endfor %}
+  {% endif %}
+{% endblock %}
+

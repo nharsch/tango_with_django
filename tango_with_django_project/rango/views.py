@@ -2,10 +2,11 @@ from datetime import datetime
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.forms.models import modelformset_factory
 from django.shortcuts import render, redirect
 
 from rango.models import Category, Page, UserProfile, User
-from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm, PageBulkForm
+from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm, PageBulkForm, ManifestInitForm
 from rango.bing_search import run_query
 
 def index(request):
@@ -264,6 +265,31 @@ def add_pages(request):
         form = PageBulkForm
         context_dict = {'form':form}
         return render(request, 'rango/add_pages.html', context_dict)
+
+def manifest_add(request):
+    '''
+    take one input, create form with cats populated
+    '''
+    if request.method == 'GET':
+        return render(request, 'rango/manifest_add.html', {'manifest_init_form':ManifestInitForm})
+    else:
+
+        incoming_title = request.POST.get('title')
+        cats = Category.objects.all()
+        # create the formset dynamically
+        PageFormSet = modelformset_factory(Page, 
+                                           fields=('category', 'title', 'url'), 
+                                           extra=len(cats),
+                                           )
+        formset = PageFormSet(initial=[
+                                {'title':'test_input'}],
+                                queryset=Page.objects.none(),
+                              )
+        for form in formset.forms:
+            form.initial['title'] = incoming_title
+
+        return render(request, 'rango/manifest_add.html', {'formset':formset})
+    
 
 @login_required
 def restricted(request):

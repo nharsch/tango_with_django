@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+
 from django.forms.models import modelformset_factory
 from rango.models import Page, Category, UserProfile
 
@@ -16,6 +17,9 @@ class CategoryForm(forms.ModelForm):
     # Provide an association between the ModelForm and a model
         model = Category
         field = ('name',)
+
+class ManifestInitForm(forms.Form):
+    title = forms.CharField(max_length=128, help_text="Please enter the title you want to add")
 
 class PageForm(forms.ModelForm):
     title = forms.CharField(max_length=128, help_text="Please enter the title of the page")
@@ -47,6 +51,8 @@ class PageForm(forms.ModelForm):
 
         return cleaned_data
 
+
+
 PageFormSetBase = modelformset_factory(
     Page, extra=0, fields=('title', 'category', 'url', 'views')
 )
@@ -59,6 +65,10 @@ class PageBulkForm(forms.Form):
                          help_text="Please ener the URL of the page",
                          widget=forms.widgets.TextInput,)
     views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
+
+class PageInlineForm(forms.ModelForm):
+    class Meta:
+        model = Page
 
 
 class UserForm(forms.ModelForm):
