@@ -1,7 +1,8 @@
-from django import forms
 from django.contrib.auth.models import User
-
+from django import forms
 from django.forms.models import modelformset_factory
+from django.forms.formsets import formset_factory
+
 from rango.models import Page, Category, UserProfile
 
 class CategoryForm(forms.ModelForm):
@@ -56,10 +57,6 @@ class FullPageForm(PageForm):
     category = forms.ModelChoiceField(queryset=Category.objects.all())
 
 
-PageFormSetBase = modelformset_factory(
-    Page, extra=0, fields=('title', 'category', 'url', 'views')
-)
-
 class PageBulkForm(forms.Form):
     '''form to create several pages at once'''
     category_choices = forms.ModelMultipleChoiceField(queryset=Category.objects.all())
@@ -69,10 +66,7 @@ class PageBulkForm(forms.Form):
                          widget=forms.widgets.TextInput,)
     views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
 
-class PageInlineForm(forms.ModelForm):
-    class Meta:
-        model = Page
-
+PageFormSet = modelformset_factory(Page, extra=0)
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())

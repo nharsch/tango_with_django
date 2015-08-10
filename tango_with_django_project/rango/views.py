@@ -7,7 +7,8 @@ from django.forms.models import modelformset_factory
 from django.shortcuts import render, redirect
 
 from rango.models import Category, Page, UserProfile, User
-from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm, PageBulkForm, ManifestInitForm, FullPageForm
+from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
+from rango.forms import PageBulkForm, PageFormSet, ManifestInitForm, FullPageForm
 from rango.bing_search import run_query
 
 def index(request):
@@ -303,17 +304,30 @@ def bulk_page_form_add(request):
         {'title':'test_2','url': 'www.url2.com'}
     ]
 
-    # if request.method == 'GET':
+    if request.method == 'GET':
     #     # TODO: make this CSV import
     #     return render(request, 'rango/manifest_add.html', {'manifest_init_form':ManifestInitForm})
     #
     # else:
     # create the formset dynamically
+        formset = PageFormSet(
+                             queryset=Page.objects.none(),
+                             initial=job_list
+                             )
+                              
+        return render(request, 'rango/bulk_page_add.html', {'formset':formset})
 
-    PageFormSet = formset_factory(FullPageForm, extra=0)
-    formset = PageFormSet(initial=job_list)
+    if request.method == 'POST':
+        formset = PageFormSet(request.POST)
+        if formset.is_valid():
+            for form in formset:
+                print form
+                form.save()
+            return HTTPRedirect('/admin/rango/categories')
 
-    return render(request, 'rango/bulk_page_add.html', {'formset':formset})
+        else:
+            return render(request, 'rango/bulk_page_add.html', {'formset':formset})
+        
 
 
 @login_required

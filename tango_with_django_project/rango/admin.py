@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from rango.models import Category, Page, UserProfile
-from rango.forms import PageBulkForm, PageFormSetBase, PageInlineForm
+from rango.forms import PageBulkForm 
 
 # Add in this class to customize the admin interface
 class CategoryAdmin(admin.ModelAdmin):
