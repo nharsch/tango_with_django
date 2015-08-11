@@ -1,4 +1,6 @@
 from datetime import datetime
+import os
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -7,7 +9,7 @@ from django.forms.models import modelformset_factory
 from django.shortcuts import render, redirect
 
 from rango.models import Category, Page, UserProfile, User
-from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
+from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm, UploadForm
 from rango.forms import PageBulkForm, PageFormSet, ManifestInitForm, FullPageForm
 from rango.bing_search import run_query
 
@@ -294,27 +296,37 @@ def manifest_add(request):
 
         return render(request, 'rango/manifest_add.html', {'formset':formset})
 
-    
+def upload(request):
+    '''upload xls'''
+    if request.method == "GET":
+        form = UploadForm
+        return render(request, 'rango/bulk_page_add.html', {'form':form})
+    else:
+        upload_form = UploadForm(request.POST, request.FILES)
+        if upload_form.is_valid():
+            return HttpResponse(upload_form.cleaned_data['updates'])
+        return render(request, 'rango/bulk_page_add.html', {'form':upload_form})
+
+
 def upload_verify(request):
     '''
     take list of assets, create render page with formset for each asset 
     for user validation
     '''
-    job_list = [
-        {'category':'python', 'title':'test_1','url': 'www.url1.com'},
-        {'category':'django', 'title':'test_2','url': 'www.url2.com'}
-    ]
-
-    if request.method == 'GET':
-    #     # TODO: make this CSV import
+    # job_list = [
+    #     {'category':'python', 'title':'test_1','url': 'www.url1.com'},
+    #     {'category':'django', 'title':'test_2','url': 'www.url2.com'}
+    # ]
+    #
+    # if request.method == 'GET':
+    # #     # TODO: make this CSV import
     #     return render(request, 'rango/manifest_add.html', {'manifest_init_form':ManifestInitForm})
     #
-    # else:
     # create the formset dynamically
-        formset = PageFormSet(
-                             initial=job_list
-                             )
-        return render(request, 'rango/bulk_page_add.html', {'formset':formset})
+        # formset = PageFormSet(
+        #                      initial=job_list
+        #                      )
+        # XLSX imput form
 
     if request.method == 'POST':
         formset = PageFormSet(request.POST)
@@ -326,8 +338,9 @@ def upload_verify(request):
 
         else:
             return render(request, 'rango/bulk_page_add.html', {'formset':formset})
-
-
+ 
+    else:
+        return HttpResponseRedirect('/rango/upload')
 
 @login_required
 def restricted(request):
