@@ -322,7 +322,7 @@ def upload_verify(request):
             for form in formset:
                 print form
                 form.save()
-            return HttpResponseRedirect('/admin/rango/category')
+            return HttpResponseRedirect('/admin/rango/page')
 
         else:
             return render(request, 'rango/bulk_page_add.html', {'formset':formset})
