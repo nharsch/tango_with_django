@@ -1,5 +1,4 @@
 from datetime import datetime
-import os
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
@@ -304,7 +303,10 @@ def upload(request):
     else:
         upload_form = UploadForm(request.POST, request.FILES)
         if upload_form.is_valid():
-            return HttpResponse(upload_form.cleaned_data['updates'])
+            job_list = upload_form.cleaned_data['updates']
+            formset = PageFormSet(initial=job_list)
+
+            return render(request, 'rango/bulk_page_add.html', {'formset':formset})
         return render(request, 'rango/bulk_page_add.html', {'form':upload_form})
 
 

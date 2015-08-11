@@ -16,7 +16,7 @@
   {% endif %}
 
   {% if formset %}
-  <form method="post">{% csrf_token %}
+  <form action="/rango/upload_verify/" method="post">{% csrf_token %}
     {{ formset.management_form }}
 
     {% for form in formset %}
