@@ -294,14 +294,15 @@ def manifest_add(request):
 
         return render(request, 'rango/manifest_add.html', {'formset':formset})
 
-
-def bulk_page_form_add(request):
+    
+def upload_verify(request):
     '''
     take list of assets, create render page with formset for each asset 
+    for user validation
     '''
     job_list = [
-        {'category':'', 'title':'test_1','url': 'www.url1.com'},
-        {'title':'test_2','url': 'www.url2.com'}
+        {'category':'python', 'title':'test_1','url': 'www.url1.com'},
+        {'category':'django', 'title':'test_2','url': 'www.url2.com'}
     ]
 
     if request.method == 'GET':
@@ -321,7 +322,7 @@ def bulk_page_form_add(request):
             for form in formset:
                 print form
                 form.save()
-            return HTTPRedirect('/admin/rango/categories')
+            return HttpResponseRedirect('/admin/rango/category')
 
         else:
             return render(request, 'rango/bulk_page_add.html', {'formset':formset})
