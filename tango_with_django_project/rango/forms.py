@@ -37,7 +37,7 @@ class PageForm(forms.ModelForm):
         # This way we don't need every field in the model present
         # Some fields may allow NULL values, so we may not want to includie them...
         # we can either exclude the category field from the form,
-        exclude = ('category',)
+        # exclude = ('category',)
         #or specify the fields to include (i.e. not include the category field)
         #fields = ('title', 'url', 'views')
 
@@ -54,7 +54,8 @@ class PageForm(forms.ModelForm):
 
 class FullPageForm(PageForm):
     '''form page above with category dropdown'''
-    category = forms.ModelChoiceField(queryset=Category.objects.all())
+    category = forms.ModelChoiceField(queryset=Category.objects.all(),
+                                      to_field_name='slug')
 
 
 class PageBulkForm(forms.Form):
@@ -66,7 +67,7 @@ class PageBulkForm(forms.Form):
                          widget=forms.widgets.TextInput,)
     views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
 
-PageFormSet = modelformset_factory(Page, extra=0)
+PageFormSet = formset_factory(FullPageForm, extra=0)
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())

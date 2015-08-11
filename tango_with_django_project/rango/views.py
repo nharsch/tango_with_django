@@ -300,7 +300,7 @@ def bulk_page_form_add(request):
     take list of assets, create render page with formset for each asset 
     '''
     job_list = [
-        {'category':'1', 'title':'test_1','url': 'www.url1.com'},
+        {'category':'', 'title':'test_1','url': 'www.url1.com'},
         {'title':'test_2','url': 'www.url2.com'}
     ]
 
@@ -311,10 +311,8 @@ def bulk_page_form_add(request):
     # else:
     # create the formset dynamically
         formset = PageFormSet(
-                             queryset=Page.objects.none(),
                              initial=job_list
                              )
-                              
         return render(request, 'rango/bulk_page_add.html', {'formset':formset})
 
     if request.method == 'POST':
@@ -327,7 +325,7 @@ def bulk_page_form_add(request):
 
         else:
             return render(request, 'rango/bulk_page_add.html', {'formset':formset})
-        
+
 
 
 @login_required
