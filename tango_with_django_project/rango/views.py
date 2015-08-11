@@ -1,4 +1,5 @@
 from datetime import datetime
+from io import BytesIO
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
@@ -7,10 +8,14 @@ from django.forms.formsets import formset_factory
 from django.forms.models import modelformset_factory
 from django.shortcuts import render, redirect
 
+from xlsxwriter import Workbook
+
 from rango.models import Category, Page, UserProfile, User
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm, UploadForm
 from rango.forms import PageBulkForm, PageFormSet, ManifestInitForm, FullPageForm
 from rango.bing_search import run_query
+
+
 
 def index(request):
     # Query the database for a list of ALL categories currently stored.
@@ -294,6 +299,45 @@ def manifest_add(request):
             form.initial['title'] = incoming_title
 
         return render(request, 'rango/manifest_add.html', {'formset':formset})
+
+def generate_change_template(request):
+    stream = BytesIO()
+    book = Workbook(stream)
+    bold = book.add_format({'bold': True})
+    # create sheet for user input
+    sheet = book.add_worksheet('Updates')
+    # set headers
+    sheet.write('A1', 'category (like destID)', bold)
+    sheet.write('B1', 'title (like input cat)', bold)
+    sheet.write('C1', 'url (like output cat)', bold)
+    rows = 400
+    # no idead
+    sheet.data_validation(1, 1, rows, 1, {
+        'validate': 'list', 
+        'source': 'Valid_Categories'
+    })
+
+    # set width
+    sheet.set_column('A:A', 25)
+    sheet.set_column('B:B', 25)
+    sheet.set_column('C:C', 25)
+
+    # Create sheet containing data for user validations
+    # sheet = book.add_worksheet('Validations')
+    # sheet.write('A1', 'Categories', bold)
+    categories = Category.objects.all()
+    for i, cat in enumerate(categories):
+        sheet.write(i + 1, 0, cat.slug)
+    # book.define_name('Valid_Categories', '=Validations!$A$2:$A${}'.format(1 + categories.count()))
+    # sheet.set_column('A:A', 10)
+    # sheet.set_column('B:B', 2)
+
+    book.close()
+    stream.seek(0)
+    response = HttpResponse(stream,
+                            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachement; filename="page_add_template.xlsx"'
+    return response
 
 def upload(request):
     '''upload xls'''
